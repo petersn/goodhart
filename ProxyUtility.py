@@ -18,6 +18,20 @@ VERSION = 0.1
 
 ACTIVATION = "tanh"
 
+INPUT_SIZE         = 10
+ARCHITECTURE_REAL  = [INPUT_SIZE] + [10, 10, 10]
+ARCHITECTURE_PROXY = [INPUT_SIZE] + [10, 10, 10]
+TRAINING_SAMPLES   = 200
+TRAINING_STEPS     = 2000
+LEARNING_RATE      = 0.1
+UNIFORM_X_VALS     = True
+UNIFORM_Y_VALS     = True
+
+NUM_SAMPLES = 1000000
+
+OPT_STEP_SIZE = 0.05
+OPT_STEPS = 100
+
 class Net:
     """Feed-forward neural net with counts[0] inputs, counts[1:] neurons in
     each hidden layer with relu activation, and 1 output with tanh activation."""
@@ -43,15 +57,6 @@ def do_optimization(sess, title, loss, opt, training_steps, feed_dict):
     # plt.plot(loss_plot)
     # plt.savefig(title + ".png", dpi=600)
     return loss_plot
-
-INPUT_SIZE         = 10
-ARCHITECTURE_REAL  = [INPUT_SIZE] + [10, 10, 10]
-ARCHITECTURE_PROXY = [INPUT_SIZE] + [10, 10, 10]
-TRAINING_SAMPLES   = 200
-TRAINING_STEPS     = 2000
-LEARNING_RATE      = 0.1
-UNIFORM_X_VALS     = True
-UNIFORM_Y_VALS     = True
 
 
 # Create all required networks.
@@ -179,15 +184,14 @@ def optimize_samples(samples, step_size, steps):
 
 # Compute a scatter plot of proxy utility vs real utility on purely random inputs.
 
-N = 1000000
 #SCATTER_COUNT = 100000
 
-samples = genx(N, INPUT_SIZE)
+samples = genx(NUM_SAMPLES, INPUT_SIZE)
 random_proxy_vals = compute_utility(proxy_utility, samples)
 random_real_vals = compute_utility(real_utility, samples)
 #plt.scatter(random_proxy_vals[:SCATTER_COUNT], random_real_vals[:SCATTER_COUNT], alpha=0.01)
 
-optimized_samples = optimize_samples(samples, 0.05, 100)
+optimized_samples = optimize_samples(samples, OPT_STEP_SIZE, OPT_STEPS)
 optimized_proxy_vals = compute_utility(proxy_utility, optimized_samples)
 optimized_real_vals = compute_utility(real_utility, optimized_samples)
 #plt.scatter(optimized_proxy_vals[:SCATTER_COUNT], optimized_real_vals[:SCATTER_COUNT], alpha=0.005)
