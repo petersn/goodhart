@@ -13,8 +13,10 @@ import numpy as np
 if sys.version_info < (3,):
     range = xrange
 
+
 EPSILON = 0.01
 NUM_BUCKETS = 500
+
 
 def make_bucket(proxy_vals, epsilon, x):
     return np.abs(proxy_vals - x) < epsilon
@@ -42,28 +44,28 @@ def real_mean(proxy_vals, real_vals, bucket):
 def produce_traces(run):
     linear = np.linspace(-1, 1, NUM_BUCKETS)
 
-    random_x = []
-    random_y = []
+    random_proxy = []
+    random_real = []
 
-    optimized_x = []
-    optimized_y = []
+    optimized_proxy = []
+    optimized_real = []
 
     for x in linear:
         random_bucket = make_bucket(run["random_proxy_vals"], EPSILON, x)
         optimized_bucket = make_bucket(run["optimized_proxy_vals"], EPSILON, x)
 
-        random_x.append(proxy_mean(run["random_proxy_vals"], random_bucket))
-        random_y.append(real_mean(run["random_proxy_vals"], run["random_real_vals"], random_bucket))
+        random_proxy.append(proxy_mean(run["random_proxy_vals"], random_bucket))
+        random_real.append(real_mean(run["random_proxy_vals"], run["random_real_vals"], random_bucket))
 
-        optimized_x.append(proxy_mean(run["optimized_proxy_vals"], optimized_bucket))
-        optimized_y.append(real_mean(run["optimized_proxy_vals"], run["optimized_real_vals"], optimized_bucket))
+        optimized_proxy.append(proxy_mean(run["optimized_proxy_vals"], optimized_bucket))
+        optimized_real.append(real_mean(run["optimized_proxy_vals"], run["optimized_real_vals"], optimized_bucket))
 
     return {
         "linear": linear,
-        "random_x": random_x,
-        "random_y": random_y,
-        "optimized_x": optimized_x,
-        "optimized_y": optimized_y,
+        "random_proxy": random_proxy,
+        "random_real": random_real,
+        "optimized_proxy": optimized_proxy,
+        "optimized_real": optimized_real,
     }
 
 
@@ -83,13 +85,13 @@ if __name__ == "__main__":
 
     plt.rcParams["figure.figsize"] = 16, 12
 
-    plt.plot(traces["linear"], traces["random_y"], label="Real Utility (Random)")
-    plt.plot(traces["linear"], traces["optimized_y"], label="Real Utility (Optimized)")
-    plt.plot(traces["linear"], traces["optimized_y"] - traces["random_y"], label="Real Utility (Optimized - Random)")
+    plt.plot(traces["linear"], traces["random_real"], label="Real Utility (Random)")
+    plt.plot(traces["linear"], traces["optimized_real"], label="Real Utility (Optimized)")
+    plt.plot(traces["linear"], traces["optimized_real"] - traces["random_real"], label="Real Utility (Optimized - Random)")
 
-    # plt.plot(traces["linear"], traces["random_x"], label="Proxy Utility (Random)")
-    # plt.plot(traces["linear"], traces["optimized_x"], label="Proxy Utility (Optimized)")
-    plt.plot(traces["linear"], traces["optimized_x"] - traces["random_y"], label="Proxy Utility (Optimized - Random)")
+    # plt.plot(traces["linear"], traces["random_proxy"], label="Proxy Utility (Random)")
+    # plt.plot(traces["linear"], traces["optimized_proxy"], label="Proxy Utility (Optimized)")
+    plt.plot(traces["linear"], traces["optimized_proxy"] - traces["random_proxy"], label="Proxy Utility (Optimized - Random)")
 
     plt.legend()
     plt.xlabel("Proxy Utility")
