@@ -26,9 +26,9 @@ INPUT_SIZE = 10
 ARCHITECTURE_REAL = [INPUT_SIZE] + [10, 10, 10]
 ARCHITECTURE_PROXY = [INPUT_SIZE] + [10, 10, 10]
 REAL_TRAINING_STEPS = 2000
-PROXY_TRAINING_STEPS = 2000
+PROXY_TRAINING_STEPS = 5000
 PROXY_TRAINING_SAMPLES = 200
-LEARNING_RATE = 0.025
+LEARNING_RATE = 0.05
 MOMENTUM = 0.9
 UNIFORM_X_VALS = True
 UNIFORM_Y_VALS = True
@@ -41,7 +41,7 @@ OPT_STEPS = 100
 
 class Net:
     """Feed-forward neural net with counts[0] inputs, counts[1:] neurons in
-    each hidden layer with relu activation, and 1 output with tanh activation."""
+    each hidden layer with ACTIVATION, and 1 output with tanh activation."""
 
     def __init__(self, counts):
         self.input = tf.placeholder(tf.float32, [None, counts[0]], name="input")
