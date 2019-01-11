@@ -28,8 +28,8 @@ ARCHITECTURE_PROXY = [INPUT_SIZE] + [10, 10, 10]
 REAL_TRAINING_STEPS = 2000
 PROXY_TRAINING_STEPS = 2000
 PROXY_TRAINING_SAMPLES = 200
-LEARNING_RATE = 0.1
-MOMENTUM = 0
+LEARNING_RATE = 0.025
+MOMENTUM = 0.9
 UNIFORM_X_VALS = True
 UNIFORM_Y_VALS = True
 
@@ -51,7 +51,6 @@ class Net:
         self.output = tf.layers.dense(flow, 1, activation="tanh")
 
 def do_optimization(sess, title, loss, opt, training_steps, feed_dict):
-    sess.run(tf.global_variables_initializer())
     loss_plot = []
     for _ in range(training_steps):
         l, _ = sess.run(
@@ -98,20 +97,31 @@ for run_i in range(NUM_RUNS):
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate)
 
 
-    # Do a first pass of training real_utility on our random data.
+    # Set up optimizers
     desired_output = tf.placeholder(tf.float32, [None, 1], name="desired_output")
-    loss = tf.reduce_mean(
+    loss1 = tf.reduce_mean(
         tf.squared_difference(real_utility.output, desired_output),
     )
-    opt = optimizer.minimize(loss)
+    opt1 = optimizer.minimize(loss1)
 
+    loss2 = tf.reduce_mean(
+        tf.squared_difference(
+            tf.stop_gradient(real_utility.output),
+            proxy_utility.output,
+        ),
+    )
+    opt2 = optimizer.minimize(loss2)
+
+
+    # Do a first pass of training real_utility on our random data.
     sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
 
     do_optimization(
         sess,
         "RealUtilityTraining",
-        loss,
-        opt,
+        loss1,
+        opt1,
         REAL_TRAINING_STEPS,
         {
             real_utility.input: random_xs,
@@ -131,19 +141,11 @@ for run_i in range(NUM_RUNS):
     # Now train proxy_utility to match real_utility.
     training_set = genx(PROXY_TRAINING_SAMPLES, INPUT_SIZE)
 
-    loss = tf.reduce_mean(
-        tf.squared_difference(
-            tf.stop_gradient(real_utility.output),
-            proxy_utility.output,
-        ),
-    )
-    opt = optimizer.minimize(loss)
-
     do_optimization(
         sess,
         "ProxyUtilityTraining",
-        loss,
-        opt,
+        loss2,
+        opt2,
         PROXY_TRAINING_STEPS,
         {
             real_utility.input: training_set,
@@ -202,17 +204,17 @@ for run_i in range(NUM_RUNS):
 
     # Compute a scatter plot of proxy utility vs real utility on purely random inputs.
 
-    # SCATTER_COUNT = 100000
-
     samples = genx(NUM_SAMPLES, INPUT_SIZE)
     random_proxy_vals = compute_utility(proxy_utility, samples)
     random_real_vals = compute_utility(real_utility, samples)
-    # plt.scatter(random_proxy_vals[:SCATTER_COUNT], random_real_vals[:SCATTER_COUNT], alpha=0.01)
+    # plt.scatter(random_proxy_vals[:100000], random_real_vals[:100000], alpha=0.01)
+    # plt.show()
 
     optimized_samples = optimize_samples(samples, OPT_STEP_SIZE, OPT_STEPS)
     optimized_proxy_vals = compute_utility(proxy_utility, optimized_samples)
     optimized_real_vals = compute_utility(real_utility, optimized_samples)
-    # plt.scatter(optimized_proxy_vals[:SCATTER_COUNT], optimized_real_vals[:SCATTER_COUNT], alpha=0.005)
+    # plt.scatter(optimized_proxy_vals[:100000], optimized_real_vals[:100000], alpha=0.005)
+    # plt.show()
 
 
     # Write a file with the data.
