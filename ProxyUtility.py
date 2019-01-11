@@ -14,6 +14,8 @@ from itertools import count
 if sys.version_info < (3,):
     range = xrange
 
+VERSION = 0.1
+
 ACTIVATION = "tanh"
 
 class Net:
@@ -181,14 +183,14 @@ N = 1000000
 #SCATTER_COUNT = 100000
 
 samples = genx(N, INPUT_SIZE)
-random_xs = compute_utility(proxy_utility, samples)
-random_ys = compute_utility(real_utility, samples)
-#plt.scatter(random_xs[:SCATTER_COUNT], random_ys[:SCATTER_COUNT], alpha=0.01)
+random_proxy_vals = compute_utility(proxy_utility, samples)
+random_real_vals = compute_utility(real_utility, samples)
+#plt.scatter(random_proxy_vals[:SCATTER_COUNT], random_real_vals[:SCATTER_COUNT], alpha=0.01)
 
 optimized_samples = optimize_samples(samples, 0.05, 100)
-optimized_xs = compute_utility(proxy_utility, optimized_samples)
-optimized_ys = compute_utility(real_utility, optimized_samples)
-#plt.scatter(optimized_xs[:SCATTER_COUNT], optimized_ys[:SCATTER_COUNT], alpha=0.005)
+optimized_proxy_vals = compute_utility(proxy_utility, optimized_samples)
+optimized_real_vals = compute_utility(real_utility, optimized_samples)
+#plt.scatter(optimized_proxy_vals[:SCATTER_COUNT], optimized_real_vals[:SCATTER_COUNT], alpha=0.005)
 
 
 # Write a file with the data.
@@ -213,10 +215,10 @@ for i in count():
 with open(output_name, "wb") as f:
     pickle.dump(
         {
-            "random_xs": random_xs,
-            "random_ys": random_ys,
-            "optimized_xs": optimized_xs,
-            "optimized_ys": optimized_ys,
+            "random_proxy_vals": random_proxy_vals,
+            "random_real_vals": random_real_vals,
+            "optimized_proxy_vals": optimized_proxy_vals,
+            "optimized_real_vals": optimized_real_vals,
             "hyper_parameters": all_hyper_parameters,
         },
         f,

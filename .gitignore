@@ -109,5 +109,6 @@ ENV/
 # Pytest
 .pytest_cache/
 
-# Runs
+# Saved data
 runs/
+output.png
