@@ -21,22 +21,21 @@ VERSION = 0.1
 NUM_RUNS = 1
 
 ACTIVATION = "tanh"
-
-INPUT_SIZE = 10
+INPUT_SIZE = 50
 ARCHITECTURE_REAL = [INPUT_SIZE] + [10, 10, 10]
 ARCHITECTURE_PROXY = [INPUT_SIZE] + [10, 10, 10]
 REAL_TRAINING_STEPS = 2000
-PROXY_TRAINING_STEPS = 5000
+PROXY_TRAINING_STEPS = 2000
 PROXY_TRAINING_SAMPLES = 200
-LEARNING_RATE = 0.05
-MOMENTUM = 0.9
+LEARNING_RATE = 0.1
+MOMENTUM = 0
 UNIFORM_X_VALS = True
 UNIFORM_Y_VALS = True
 
-NUM_SAMPLES = 1000000
-
 OPT_STEP_SIZE = 0.05
-OPT_STEPS = 100
+OPT_STEPS = 10
+OPT_SET_SIZE = 10
+NUM_SAMPLES = 1000000
 
 
 class Net:
@@ -201,6 +200,16 @@ for run_i in range(NUM_RUNS):
             samples += step_directions * step_size
         return samples
 
+    # def randoptimize_samples(opt_set_size, num_samples, input_size):
+    #     samples = genx(num_samples * opt_set_size, input_size)
+    #     proxy_vals = compute_utility(proxy_utility, samples)
+    #     for i in range(num_samples):
+    #         start, stop = i*opt_set_size, (i+1)*opt_set_size
+    #         opt_set = samples[start:stop]
+    #         opt_util = proxy_vals[start:stop]
+    #         samples[i] = opt_set[np.argmax(opt_util, axis=0)]
+    #     return samples
+
 
     # Compute a scatter plot of proxy utility vs real utility on purely random inputs.
 
@@ -213,6 +222,10 @@ for run_i in range(NUM_RUNS):
     optimized_proxy_vals = compute_utility(proxy_utility, optimized_samples)
     optimized_real_vals = compute_utility(real_utility, optimized_samples)
     # plt.scatter(optimized_proxy_vals[:100000], optimized_real_vals[:100000], alpha=0.005)
+
+    # randoptimized_samples = randoptimize_samples(OPT_SET_SIZE, NUM_SAMPLES, INPUT_SIZE)
+    # randoptimized_proxy_vals = compute_utility(proxy_utility, randoptimized_samples)
+    # randoptimized_real_vals = compute_utility(real_utility, randoptimized_samples)
 
     # plt.show()
 
@@ -239,13 +252,18 @@ for run_i in range(NUM_RUNS):
     with open(output_name, "wb") as f:
         pickle.dump(
             {
-                # "samples": samples,
-                # "optimized_samples": optimized_samples,
-                "random_proxy_vals": random_proxy_vals,
-                "random_real_vals": random_real_vals,
-                "optimized_proxy_vals": optimized_proxy_vals,
-                "optimized_real_vals": optimized_real_vals,
-                "hyper_parameters": all_hyper_parameters,
+                var: val for var, val in locals().items()
+                if var in (
+                    # "samples",
+                    # "optimized_samples",
+                    "random_proxy_vals",
+                    "random_real_vals",
+                    "optimized_proxy_vals",
+                    "optimized_real_vals",
+                    # "randoptimized_proxy_vals",
+                    # "randoptimized_real_vals",
+                    "hyper_parameters",
+                )
             },
             f,
             protocol=pickle.HIGHEST_PROTOCOL,
