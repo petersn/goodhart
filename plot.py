@@ -105,7 +105,7 @@ if __name__ == "__main__":
     for k in traces:
         traces[k] = np.nanmean(traces[k], axis=0)
 
-    plt.rcParams["figure.figsize"] = 16, 12
+    plt.figure(figsize=(16, 12))
 
     plt.plot(traces["linear"], traces["random_real"], label="Real Utility (Random)")
     plt.plot(traces["linear"], traces["optimized_real"], label="Real Utility (Optimized)")
@@ -120,5 +120,5 @@ if __name__ == "__main__":
     plt.grid()
 
     plot_file = os.path.join(os.path.dirname(__file__), "output.png")
-    plt.savefig(plot_file, dpi=600)
+    plt.savefig(plot_file)
     plt.show()

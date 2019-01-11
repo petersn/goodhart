@@ -208,12 +208,12 @@ for run_i in range(NUM_RUNS):
     random_proxy_vals = compute_utility(proxy_utility, samples)
     random_real_vals = compute_utility(real_utility, samples)
     # plt.scatter(random_proxy_vals[:100000], random_real_vals[:100000], alpha=0.01)
-    # plt.show()
 
     optimized_samples = optimize_samples(samples, OPT_STEP_SIZE, OPT_STEPS)
     optimized_proxy_vals = compute_utility(proxy_utility, optimized_samples)
     optimized_real_vals = compute_utility(real_utility, optimized_samples)
     # plt.scatter(optimized_proxy_vals[:100000], optimized_real_vals[:100000], alpha=0.005)
+
     # plt.show()
 
 
