@@ -42,6 +42,14 @@ def bucket_count(bucket):
 # def sign(x):
 #     return x / abs(x)
 
+def norm(arr):
+    return arr/np.nanmax(arr)
+
+def get_traces_for_file(run_path):
+    print("Processing:", run_path)
+    with open(run_path, "rb") as f:
+        return pickle.load(f)
+
 def produce_traces(run):
     linear = np.linspace(-1, 1, NUM_BUCKETS)
 
@@ -59,6 +67,10 @@ def produce_traces(run):
 
     deltas = []
     delta_samples = []
+
+    real_values = []
+    proxy_values = []
+    optimized_count = []
 
     for x in linear:
         random_bucket = make_bucket(run["random_proxy_vals"], EPSILON, x)
@@ -81,6 +93,11 @@ def produce_traces(run):
         deltas.append(bucket_mean(run["optimized_real_vals"] - run["random_real_vals"], delta_bucket))
         delta_samples.append(bucket_count(delta_bucket))
 
+        samples_bucket = make_bucket(run["samples"], EPSILON, x)
+        real_values.append(bucket_mean(run["random_real_vals"], samples_bucket))
+        proxy_values.append(bucket_mean(run["random_proxy_vals"], samples_bucket))
+        optimized_count.append(bucket_count(make_bucket(run["optimized_samples"], EPSILON, x)))
+
     return {
         var: val for var, val in locals().items()
         if var in (
@@ -93,19 +110,14 @@ def produce_traces(run):
             "optimized_samples",
             "deltas",
             "delta_samples",
+            "real_values",
+            "proxy_values",
+            "optimized_count",
             # "randoptimized_samples",
             # "randoptimized_proxy",
             # "randoptimized_real",
         )
     }
-
-def norm(arr):
-    return arr/np.nanmax(arr)
-
-def get_traces_for_file(run_path):
-    print("Processing:", run_path)
-    with open(run_path, "rb") as f:
-        return pickle.load(f)
 
 
 if __name__ == "__main__":
@@ -124,21 +136,26 @@ if __name__ == "__main__":
 
     plt.plot(traces["linear"], traces["random_real"], label="Real Utility (Random)")
     plt.plot(traces["linear"], traces["optimized_real"], label="Real Utility (Optimized)")
-    # plt.plot(traces["linear"], traces["randoptimized_real"], label="Real Utility (Randoptimized)")
 
     plt.plot(traces["linear"], traces["optimized_real"] - traces["random_real"], label="Real Utility (Optimized - Random)")
 
-    # plt.plot(traces["linear"], traces["optimized_proxy"] - traces["random_proxy"], label="Proxy Utility (Optimized - Random)")
+    plt.plot(traces["linear"], traces["optimized_proxy"] - traces["random_proxy"], label="Proxy Utility (Optimized - Random)")
 
     plt.plot(traces["linear"], traces["deltas"], label="Optimized - Random (Real vs. Proxy)")
 
-    plt.plot(traces["linear"], norm(traces["random_samples"]), label="Random Samples")
-    plt.plot(traces["linear"], norm(traces["optimized_samples"]), label="Optimized Samples")
+    # plt.plot(traces["linear"], norm(traces["random_samples"]), label="Random Samples")
+    # plt.plot(traces["linear"], norm(traces["optimized_samples"]), label="Optimized Samples")
     # plt.plot(traces["linear"], norm(traces["randoptimized_samples"]), label="Randoptimized Samples")
-    plt.plot(traces["linear"], norm(traces["delta_samples"]), label="Delta Samples")
+    # plt.plot(traces["linear"], traces["randoptimized_real"], label="Real Utility (Randoptimized)")
+    # plt.plot(traces["linear"], norm(traces["delta_samples"]), label="Delta Samples")
+
+    # plt.plot(traces["linear"], traces["real_values"], label="Real Utility")
+    # plt.plot(traces["linear"], traces["proxy_values"], label="Proxy Utility")
+    # plt.plot(traces["linear"], norm(traces["optimized_count"]), label="Optimized Points")
 
     plt.legend()
     plt.xlabel("Proxy Utility")
+    # plt.xlabel("Input Value")
     plt.grid()
 
     plot_file = os.path.join(os.path.dirname(__file__), "output.png")

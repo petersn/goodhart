@@ -21,7 +21,7 @@ VERSION = 0.1
 NUM_RUNS = 1
 
 ACTIVATION = "tanh"
-INPUT_SIZE = 50
+INPUT_SIZE = 1
 ARCHITECTURE_REAL = [INPUT_SIZE] + [10, 10, 10]
 ARCHITECTURE_PROXY = [INPUT_SIZE] + [10, 10, 10]
 REAL_TRAINING_STEPS = 2000
@@ -34,7 +34,7 @@ UNIFORM_Y_VALS = True
 
 OPT_STEP_SIZE = 0.05
 OPT_STEPS = 10
-OPT_SET_SIZE = 10
+# OPT_SET_SIZE = 10
 NUM_SAMPLES = 1000000
 
 
@@ -254,8 +254,8 @@ for run_i in range(NUM_RUNS):
             {
                 var: val for var, val in locals().items()
                 if var in (
-                    # "samples",
-                    # "optimized_samples",
+                    "samples",
+                    "optimized_samples",
                     "random_proxy_vals",
                     "random_real_vals",
                     "optimized_proxy_vals",
