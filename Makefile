@@ -1,3 +1,6 @@
+.PHONY: all
+all: clean run plot
+
 .PHONY: run
 run:
 	python ./ProxyUtility.py
