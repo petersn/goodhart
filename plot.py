@@ -18,11 +18,17 @@ EPSILON = 0.01
 NUM_BUCKETS = 500
 
 
-def make_bucket(bucket_vals, epsilon, x):
-    return np.abs(bucket_vals - x) < epsilon
+def make_bucket(vals, epsilon, x):
+    return np.abs(vals - x) < epsilon
 
-def bucket_mean(bucket_vals, bucket):
-    return np.mean(bucket_vals[bucket])
+def bucket_mean(vals, bucket):
+    return np.mean(vals[bucket])
+
+def bucket_max(vals, bucket):
+    bucket_vals = vals[bucket]
+    if not len(bucket_vals):
+        return np.nan
+    return np.max(bucket_vals)
 
 def sample_delta(samples, optimized_samples, bucket):
     return np.mean(optimized_samples[bucket] - samples[bucket])
