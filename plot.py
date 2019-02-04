@@ -121,7 +121,6 @@ if __name__ == "__main__":
 
     plt.plot(traces["linear"], traces["random_real_vs_proxy"], label="Real Utility vs. Proxy Utility (Random Data)")
     plt.plot(traces["linear"], traces["optimized_real"], label="Real Utility vs. Proxy Utility (Optimized Data)")
-
     plt.plot(traces["linear"], traces["optimized_real"] - traces["random_real_vs_proxy"], label="Real Utility vs. Proxy Utility (Optimized Data - Random Data) [Goodhart Error]")
 
     # plt.plot(traces["linear"], traces["optimized_proxy"] - traces["random_proxy"], label="Proxy Utility (Optimized - Random) [Bucket Error]")
@@ -142,11 +141,13 @@ if __name__ == "__main__":
     # plt.plot(traces["linear"], traces["sampled_proxy_optimized_real"], label="Real Utility vs. Sampled Proxy Utility (Sampled Proxy Optimized Data)")
     # plt.plot(traces["linear"], traces["sampled_proxy_optimized_real"] - traces["random_real_vs_sampled_proxy"], label="Real Utility vs. Sampled Proxy Utility (Sampled Proxy Optimized Data - Random Data) [Goodhart Error]")
 
-    plt.plot(traces["linear"], traces["random_real_vs_grad_opt_proxy"], label="Real Utility vs. Grad Opt Proxy Utility (Random Data)")
-    plt.plot(traces["linear"], traces["grad_opt_proxy_optimized_real"], label="Real Utility vs. Grad Opt Proxy Utility (Grad Opt Proxy Optimized Data)")
-    plt.plot(traces["linear"], traces["grad_opt_proxy_optimized_real"] - traces["random_real_vs_grad_opt_proxy"], label="Real Utility vs. Grad Opt Proxy Utility (Grad Opt Proxy Optimized Data - Random Data) [Goodhart Error]")
+    # plt.plot(traces["linear"], traces["random_real_vs_grad_opt_proxy"], label="Real Utility vs. Grad Opt Proxy Utility (Random Data)")
+    # plt.plot(traces["linear"], traces["grad_opt_proxy_optimized_real"], label="Real Utility vs. Grad Opt Proxy Utility (Grad Opt Proxy Optimized Data)")
+    # plt.plot(traces["linear"], traces["grad_opt_proxy_optimized_real"] - traces["random_real_vs_grad_opt_proxy"], label="Real Utility vs. Grad Opt Proxy Utility (Grad Opt Proxy Optimized Data - Random Data) [Goodhart Error]")
 
     plt.legend()
+    # plt.ylabel("Proxy Utility")
+    plt.ylabel("Real Utility")
     plt.xlabel("Proxy Utility")
     # plt.xlabel("Input Value")
     plt.grid()
